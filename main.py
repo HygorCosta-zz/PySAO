@@ -1,6 +1,6 @@
 """ Framework layout to run SAO - Sequential Approximate Optimizaion."""
 import numpy as np
-from sao_opt.doe import DoE
+from sao_opt.doe import RandomDoE
 # from sao_opt.surrogate import Surrogate
 
 # ---------- Problem Layer -----------------
@@ -10,8 +10,7 @@ min_val = np.array([2, 10])
 max_val = np.array([5, 15])
 
 # ---------- Routine Layer ----------------
-doe = DoE(DIM, SAMPLES, min_val, max_val)
-sample_points = doe.determine_plan_points()
+doe = RandomDoE(DIM, min_val, max_val)
 
 # TODO: evaluate sample_points with IMEX.
 

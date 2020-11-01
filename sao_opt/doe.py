@@ -50,7 +50,7 @@ class DoE:
         return init + delta * norm_points
 
 
-class RandomDOE(DoE):
+class RandomDoE(DoE):
 
     """Random points for design experiments."""
 

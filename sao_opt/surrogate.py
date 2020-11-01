@@ -6,8 +6,7 @@ class Surrogate:
 
     """Create the surrogate model."""
 
-    def __init__(self, input_vars, output_vars, function="rbf",
-                 option="multiquadratic"):
+    def __init__(self, input_vars, output_vars, option=None):
         """Surrogate model.
 
         Parameters
@@ -21,47 +20,42 @@ class Surrogate:
         """
         self.input_vars = input_vars
         self.output_vars = output_vars
-        self.function = function
         self.option = option
 
-    def rbf_interpolator(self):
-        """ Creat the rbf interpolator.
-
-        Returns
-        -------
-        Rbf instance.
-
-        """
-        return Rbf(*self.input_vars.T, self.output_vars,
-                   self.option)
-
-    def inter_methods(self):
-        """ Interpolate methods.
-
-        Parameters
-        ----------
-        option: str
-            Select among: RBF - radial basis function.
-                          SVM - support vector machine.
-
-        Returns
-        -------
-        Method.
-        """
-        methods = {"rbf": self.rbf_interpolator()}
-        return methods[self.function]
-
-    def build_approximation(self, inter_var):
+    def build_approximation(self, method):
         """ Interpolated values.
 
         Parameters
         ----------
-        inter_var: array
-            Variables to find the interpolated value.
+        method: type of approximation.
 
         Returns
         -------
         int_value: array
             Interpolated values from the input variables.
         """
-        return self.inter_methods()(*inter_var.T)
+        if self.option is not None:
+            return method(*self.input_vars.T, self.output_vars,
+                          self.option)
+        return method(*self.input_vars.T, self.output_vars)
+
+
+class RadialBasisSurrogate(Surrogate):
+
+    """Radial Basis Surrogate. """
+
+    def __init__(self, input_train, output_train,
+                 func='cubic'):
+        super().__init__(input_train, output_train, func)
+        self.model = self.build_approximation(Rbf)
+
+    def evaluate(self, input_vars):
+        """ Evaluate the input variables and return the
+        approximate value.
+
+        Parameters
+        ----------
+        input_vars: array
+            The same number of dimensions of the input_train.
+        """
+        return self.model(*input_vars.T)
