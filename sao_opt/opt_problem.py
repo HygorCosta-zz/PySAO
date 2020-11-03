@@ -19,8 +19,14 @@ class OptimizationProblem:
 
         """
         self.res_param = self.reservoir_parameters()
+        self.ite_max = self.res_param["ite_max"]
         self.bounds = self.bounds_constr()
         self.linear = self.linear_const()
+        self.nominal = self.x_nominal()
+        self.delta = self.res_param["delta"]
+        self.ite_max_sao = self.res_param["ite_max_sao"]
+        self.tol_opt = self.res_param["tol_opt"]
+        self.tol_delta = self.res_param["tol_delta"]
 
     @staticmethod
     def reservoir_parameters():
@@ -78,11 +84,39 @@ class OptimizationProblem:
         model = ParallelPyMex(controls, self.res_param)
         return model.pool_pymex()
 
+    def high_fidelity(self, controls):
+        """High fidelity model."""
+        pool_size = self.res_param["pool_size"]
+        model = ParallelPyMex(controls, self.res_param, pool_size)
+        return model.pool_pymex()
 
-def high_fidelity(controls):
-    """High fidelity model."""
-    with open('./reservoir_config.yaml') as file:
-        res_param = yaml.load(file, Loader=yaml.FullLoader)
-    pool_size = res_param["pool_size"]
-    model = ParallelPyMex(controls, res_param, pool_size)
-    return model.pool_pymex()
+    def x_nominal(self):
+        """ Determine the nominal controls for the wells. """
+
+        def _prod_nom(res_param):
+            """ Producer norm max plat."""
+            plat_prod = res_param["max_plat_prod"]
+            prod_rate = res_param["max_rate_prod"]
+            nb_prod = res_param["nb_prod"]
+            prod_total = prod_rate * nb_prod
+            x_prod = plat_prod / prod_total
+            if x_prod > 1:
+                x_prod = 1
+            return x_prod
+
+        def _inj_nom(res_param):
+            """ Producer norm max plat."""
+            plat_inj = res_param["max_plat_inj"]
+            inj_rate = res_param["max_rate_inj"]
+            nb_inj = res_param["nb_inj"]
+            inj_total = inj_rate * nb_inj
+            x_inj = plat_inj / inj_total
+            if x_inj > 1:
+                x_inj = 1
+            return x_inj
+
+        nb_prod = self.res_param["nb_prod"]
+        nb_inj = self.res_param["nb_inj"]
+        nom_prod = _prod_nom(self.res_param)
+        nom_inj = _inj_nom(self.res_param)
+        return np.repeat([nom_prod, nom_inj], [nb_prod, nb_inj])
