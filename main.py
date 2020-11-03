@@ -1,20 +1,36 @@
 """ Framework layout to run SAO - Sequential Approximate Optimizaion."""
-import numpy as np
 from sao_opt.doe import RandomDoE
-# from sao_opt.surrogate import Surrogate
+from sao_opt.trust_region import TrustRegion
+from sao_opt.opt_problem import OptimizationProblem
+from sao_opt.surrogate import RadialBasisSurrogate
+from sao_opt.sequence import Sequence
 
 # ---------- Problem Layer -----------------
-DIM = 2
-SAMPLES = 4
-min_val = np.array([2, 10])
-max_val = np.array([5, 15])
+# Create problem
+problem = OptimizationProblem()
 
-# ---------- Routine Layer ----------------
-doe = RandomDoE(DIM, min_val, max_val)
+# Create trust region
+x_init = problem.nominal
+delta = problem.delta
+bound = problem.bounds
 
-# TODO: evaluate sample_points with IMEX.
+# Optimization settings
+ite_max = problem.ite_max
+lcons = problem.linear
 
-# surrogate = Surrogate(sample_points, imex_eval)
 
+# ---------- Init Routine Layer ----------------
+# Trust region
+trust_region = TrustRegion(x_init, delta, bound.lb, bound.ub)
+new_lb, new_ub = trust_region.determine_search_region()
+
+# Lhs sample
+doe = RandomDoE(new_lb, new_ub)
+
+# Evaluate in High fidelity model
+samples_output = problem.high_fidelity(doe.samples)
+
+# Surrogate model
+surrogate = RadialBasisSurrogate(doe.samples, samples_output)
 
 # ---------- Sequence Layer -----------------
