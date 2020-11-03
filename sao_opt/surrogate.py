@@ -18,9 +18,29 @@ class Surrogate:
 
 
         """
-        self.input_vars = input_vars
-        self.output_vars = output_vars
+        self._input_vars = input_vars
+        self._output_vars = output_vars
         self.option = option
+
+    @property
+    def input_vars(self):
+        """ Getter for input."""
+        return self._input_vars
+
+    @input_vars.setter
+    def input_vars(self, new_input):
+        """ Setter input_vars."""
+        self._input_vars = new_input
+
+    @property
+    def output_vars(self):
+        """ Getter for output."""
+        return self._output_vars
+
+    @output_vars.setter
+    def output_vars(self, new_output):
+        """ Setter for output."""
+        self._output_vars = new_output
 
     def build_approximation(self, method):
         """ Interpolated values.
@@ -59,3 +79,7 @@ class RadialBasisSurrogate(Surrogate):
             The same number of dimensions of the input_train.
         """
         return self.model(*input_vars.T)
+
+    def update(self):
+        """ Update the model."""
+        self.model = self.build_approximation(Rbf)
