@@ -68,17 +68,42 @@ class TrustConstrSolver:
 
     """Trust region constraint algorith for scipy."""
 
-    def __init__(self, func, ite_max, opt_constr=None):
-        self.func = func
-        self.ite_max = ite_max
-        self.opt_constr = opt_constr
+    def __init__(self, func, x_init, bound, lcons=None):
+        self._func = func
+        self._x_init = x_init
+        self._bound = bound
+        self.lcons = lcons
 
-    def solve_problem(self, x_init, bound):
+    @property
+    def func(self):
+        """ Getter for the func."""
+        return self._func
+
+    @func.setter
+    def func(self, method):
+        """ Setter for the func."""
+        self._func = method
+
+    @property
+    def x_init(self):
+        """ Getter for the x initial."""
+        return self._x_init
+
+    @x_init.setter
+    def x_init(self, value):
+        """ Setter for the x initial."""
+        self._x_init = value
+
+    @property
+    def bound(self):
+        """ Getter for bound constraint."""
+        return self._bound
+
+    @bound.setter
+    def bound(self, new_bound):
+        self._bound = Bounds(*new_bound)
+
+    def maximize_npv(self):
         """ Solve the optimiziation problem."""
-        if self.opt_constr is not None:
-            lcons = self.opt_constr.lcons
-        else:
-            bound = None
-            lcons = None
-        return minimize(self.func, x_init, method='trust-constr',
-                        bounds=bound, constraints=lcons)
+        return minimize(self.func, self.x_init, method='trust-constr',
+                        bounds=self.bound, constraints=self.lcons)
