@@ -6,7 +6,7 @@ class DoE:
 
     """Design of Experiments."""
 
-    def __init__(self, dim, min_values=0, max_values=1):
+    def __init__(self, min_values=0, max_values=1):
         """Create a sample.
 
         Parameters
@@ -21,8 +21,8 @@ class DoE:
             Criterion to sample the points.
 
         """
-        self.dim = dim
-        self.samples = 2 * dim - 1
+        self.dim = len(min_values)
+        self.samples = 2 * self.dim - 1
         self.min_values = min_values
         self.max_values = max_values
 
@@ -54,9 +54,9 @@ class RandomDoE(DoE):
 
     """Random points for design experiments."""
 
-    def __init__(self, dim, min_values, max_values):
+    def __init__(self, min_values, max_values):
         """Points created by random methods."""
-        super().__init__(dim, min_values, max_values)
+        super().__init__(min_values, max_values)
         self.samples = self.determine_plan_points(self.lhs_points())
 
     def lhs_points(self):
@@ -74,8 +74,8 @@ class ResponseSurface(DoE):
 
     """ Response Surface Designs from PyDOE."""
 
-    def __init__(self, dim, min_values, max_values):
-        super().__init__(dim, min_values, max_values)
+    def __init__(self, min_values, max_values):
+        super().__init__(min_values, max_values)
         self.samples = self.determine_plan_points(self.bb_points())
 
     def bb_points(self):
