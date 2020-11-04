@@ -1,20 +1,13 @@
 """ Save the results along the optimization. """
 import pandas as pd
+from sao_opt.opt_problem import Simulation
 
 
-class Results:
+class AppendResults:
 
-    """Docstring for Results. """
+    """Append the results and save."""
 
     def __init__(self):
-        """TODO: to be defined.
-
-        Parameters
-        ----------
-        Docstring for Results. : TODO
-
-
-        """
         self.count = []
         self.fob_center = []
         self.fob_star = []
@@ -62,10 +55,58 @@ class Results:
         """ Update rho."""
         self.pho.append(rho)
 
-    def update(self, fobj, x_center, delta, pho):
-        """ Update all optimization values."""
-        self.update_fobj(fobj)
-        self.update_x_center(x_center)
-        self.update_delta(delta)
-        self.update_rho(pho)
+
+class Results(AppendResults):
+
+    """Results of the simulation."""
+
+    def __init__(self, simulation, solver, surrogate, trust_region):
+        """Results from high fidelity model, surrogate model,
+        delta and rho.
+
+        Parameters
+        ----------
+        simulation: instance of Simulation()
+
+
+        """
+        super().__init__()
+        self.simulation = simulation
+        self.solver = solver
+        self.surrogate = surrogate
+        self.trust_region = trust_region
+
+    def evaluate_fobj_star(self):
+        """ Evaluate the x in the high fidelity model."""
+        x_star = self.solver.results.x
+        return self.simulation.high_fidelity(x_star)
+
+    def evaluate_fobj_center(self):
+        """ Evaluate x in the center of the trust region. """
+        x_center = self.solver.x_init
+        return self.simulation.high(x_center)
+
+    def evaluate_fap_star(self):
+        """ Optimal point in the surrogate model."""
+        return self.solver.results.fun
+
+    def evaluate_fap_center(self):
+        """ Surrogate value for x_center."""
+        x_center = self.solver.x_init
+        return self.surrogate.evaluate(x_center)
+
+    def fobj_list(self):
+        """ Create a list of fobj and fap."""
+        fobj_star = self.evaluate_fobj_star()
+        fobj_center = self.evaluate_fobj_center()
+        fap_star = self.evaluate_fap_star()
+        fap_center = self.evaluate_fap_star()
+        return [fobj_star, fobj_center, fap_star, fap_center]
+
+    def update(self):
+        """ Update the results."""
+        self.update_fobj(self.fobj_list())
+        self.update_x_center(self.solver.x_init)
+        self.update_delta(self.trust_region.delta)
+        self.update_rho(self.trust_region.rho)
         self.describe()
