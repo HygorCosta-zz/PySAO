@@ -21,10 +21,30 @@ class DoE:
             Criterion to sample the points.
 
         """
+        self._min_values = min_values
+        self._max_values = max_values
         self.dim = len(min_values)
         self.samples = 2 * self.dim - 1
-        self.min_values = min_values
-        self.max_values = max_values
+
+    @property
+    def min_values(self):
+        """ Getter for lower."""
+        return self._min_values
+
+    @min_values.setter
+    def min_values(self, new_lower):
+        """ Setter for lower."""
+        self._min_values = new_lower
+
+    @property
+    def max_values(self):
+        """ Getter for upper."""
+        return self._max_values
+
+    @max_values.setter
+    def max_values(self, new_upper):
+        """ Setter for upper."""
+        self._max_values = new_upper
 
     def get_delta(self):
         """Get delta value for each dimension.
