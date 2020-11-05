@@ -1,5 +1,7 @@
 """ Create surrogate model for SAO. """
 from scipy.interpolate import Rbf
+from .doe import RandomDoE
+from .opt_problem import Simulation
 
 
 class Surrogate:
@@ -80,6 +82,10 @@ class RadialBasisSurrogate(Surrogate):
         """
         return self.model(*input_vars.T)
 
-    def update(self):
+    def update(self, new_lb, new_ub):
         """ Update the model."""
+        doe = RandomDoE(new_lb, new_ub)
+        out_put = Simulation().high_fidelity(doe.samples)
+        self.input_vars = doe.samples
+        self.output_vars = out_put
         self.model = self.build_approximation(Rbf)
