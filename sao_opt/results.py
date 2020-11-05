@@ -1,6 +1,5 @@
 """ Save the results along the optimization. """
 import pandas as pd
-from sao_opt.opt_problem import Simulation
 
 
 class AppendResults:
@@ -14,6 +13,7 @@ class AppendResults:
         self.fap_center = []
         self.fap_star = []
         self.x_center = []
+        self.x_star = []
         self.delta = []
         self.pho = []
 
@@ -32,9 +32,11 @@ class AppendResults:
         dframe = pd.DataFrame(datas)
         dframe.to_csv("../results.out")
 
-    def update_count(self, count):
+    def update_count(self):
         """ Add counter."""
-        self.count.append(count)
+        if self.count:
+            self.count.append(1)
+        self.count.append(self.count[-1] + 1)
 
     def update_fobj(self, fobj):
         """ Append objective function."""
@@ -46,6 +48,10 @@ class AppendResults:
     def update_x_center(self, x_center):
         """ Append x_center. """
         self.x_center.append(x_center)
+
+    def update_x_star(self, x_star):
+        """ Append x_center. """
+        self.x_star.append(x_star)
 
     def update_delta(self, delta):
         """ Append delta. """
@@ -72,9 +78,39 @@ class Results(AppendResults):
         """
         super().__init__()
         self.simulation = simulation
-        self.solver = solver
-        self.surrogate = surrogate
-        self.trust_region = trust_region
+        self._solver = solver
+        self._surrogate = surrogate
+        self._trust_region = trust_region
+
+    @property
+    def solver(self):
+        """Getter solver."""
+        return self._solver
+
+    @solver.setter
+    def solver(self, new_solver):
+        """ Setter solver. """
+        self._solver = new_solver
+
+    @property
+    def surrogate(self):
+        """ Getter surrogate."""
+        return self._surrogate
+
+    @surrogate.setter
+    def surrogate(self, new_surrogate):
+        """ Setter surrogate."""
+        self._surrogate = new_surrogate
+
+    @property
+    def trust_region(self):
+        """ Getter trust_region."""
+        return self.trust_region
+
+    @trust_region.setter
+    def trust_region(self, new_region):
+        """ Setter trust_region."""
+        self._trust_region = new_region
 
     def evaluate_fobj_star(self):
         """ Evaluate the x in the high fidelity model."""
@@ -107,6 +143,8 @@ class Results(AppendResults):
         """ Update the results."""
         self.update_fobj(self.fobj_list())
         self.update_x_center(self.solver.x_init)
+        self.update_x_star(self.solver.result.x)
         self.update_delta(self.trust_region.delta)
         self.update_rho(self.trust_region.rho)
+        self.update_count()
         self.describe()
