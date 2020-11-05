@@ -73,6 +73,7 @@ class TrustConstrSolver:
         self._x_init = x_init
         self._bound = bound
         self.lcons = lcons
+        self.result = []
 
     @property
     def func(self):
@@ -105,5 +106,8 @@ class TrustConstrSolver:
 
     def maximize_npv(self):
         """ Solve the optimiziation problem."""
-        return minimize(self.func, self.x_init, method='trust-constr',
-                        bounds=self.bound, constraints=self.lcons)
+        self.result = minimize(self.func,
+                               self.x_init,
+                               method='trust-constr',
+                               bounds=self.bound,
+                               constraints=self.lcons)
