@@ -78,10 +78,10 @@ class OptimizationProblem:
 
         """
         self.opt_param = self.opt_parameters()
-        self.ite_max = self.opt_param["ite_max"]
         self.bounds = self.bounds_constr(res_param)
         self.linear = self.linear_const(res_param)
         self.delta = self.opt_param["delta"]
+        self.ite_max = self.opt_param["ite_max"]
         self.ite_max_sao = self.opt_param["ite_max_sao"]
         self.tol_opt = self.opt_param["tol_opt"]
         self.tol_delta = self.opt_param["tol_delta"]
