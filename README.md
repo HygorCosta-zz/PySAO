@@ -1,2 +1,2 @@
 # SAO
-Sequential Approximate Optimization
+Sequential Approximate Optimization for reservoir management.
