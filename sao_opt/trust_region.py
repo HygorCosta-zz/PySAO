@@ -6,7 +6,7 @@ class TrustRegion:
 
     """Create and update a trust region for optimization."""
 
-    def __init__(self, x_center, delta, lower, upper):
+    def __init__(self, x_center, problem):
         """Create the Trust region.
 
         Parameters
@@ -22,11 +22,12 @@ class TrustRegion:
 
         """
         self.x_center = x_center
-        self.delta = delta
-        self.lower = lower
-        self.upper = upper
+        self.delta = problem.delta
+        self.pho = []
+        self.lower = problem.lower
+        self.upper = problem.upper
 
-    def determine_search_region(self):
+    def update_bounds(self):
         """ Find the new search region."""
         space = self.upper - self.lower
         new_lower = self.x_center - space * self.delta / 2
@@ -37,9 +38,10 @@ class TrustRegion:
         if np.any(new_upper < self.upper):
             ind = new_upper > self.upper
             new_upper[ind] = self.upper[ind]
-        return new_lower, new_upper
+        self.lower = new_lower
+        self.upper = new_upper
 
-    def update_search_region(self, fobj, fap, x_center, x_star):
+    def update_search_region(self, results):
         """ Update the values of x_center, delta and ro.
 
         Parameters
@@ -65,21 +67,26 @@ class TrustRegion:
             Term of accept.
 
         """
-        f_center, f_star = fobj
-        fap_center, fap_star = fap
-        if (f_center - f_star) == 0 and (fap_center - fap_star) == 0:
-            pho = 0
-        else:
-            pho = (f_center - f_star) / (fap_center - fap_star)
+        f_center = results.fob_center[-1]
+        f_star = results.fob_star[-1]
+        fap_center = results.fap_center[-1]
+        fap_star = results.fap_star[-1]
+        x_center = results.x_center[-1]
+        x_star = results.x_star[-1]
 
-        if pho <= 0:
+        if (f_center - f_star) == 0 and (fap_center - fap_star) == 0:
+            self.pho = 0
+        else:
+            self.pho = (f_center - f_star) / (fap_center - fap_star)
+
+        if self.pho <= 0:
             self.x_center = x_center
             self.delta = 0.5 * self.delta
-        elif 0 < pho <= 0.25:
+        elif 0 < self.pho <= 0.25:
             self.x_center = x_star
             self.delta = 0.5 * self.delta
-        elif (0.25 < pho < 0.75) or pho > 1.25:
+        elif (0.25 < self.pho < 0.75) or self.pho > 1.25:
             self.x_center = x_star
-        elif 0.75 <= pho <= 1.25:
+        elif 0.75 <= self.pho <= 1.25:
             self.x_center = x_star
             self.delta = 1.5 * self.delta
