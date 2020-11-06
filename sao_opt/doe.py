@@ -24,7 +24,7 @@ class DoE:
         self._min_values = min_values
         self._max_values = max_values
         self.dim = len(min_values)
-        self.samples = 2 * self.dim - 1
+        self.num_samples = 2 * self.dim - 1
 
     @property
     def min_values(self):
@@ -77,7 +77,11 @@ class RandomDoE(DoE):
     def __init__(self, min_values, max_values):
         """Points created by random methods."""
         super().__init__(min_values, max_values)
-        self.samples = self.determine_plan_points(self.lhs_points())
+
+    @property
+    def samples(self):
+        """ Update the samples. """
+        return self.determine_plan_points(self.lhs_points())
 
     def lhs_points(self):
         """Latin Hypercube Samples.
@@ -87,7 +91,7 @@ class RandomDoE(DoE):
         np.array - (num_samples, num_dim)
 
         """
-        return lhs(self.dim, self.samples)
+        return lhs(self.dim, self.num_samples)
 
 
 class ResponseSurface(DoE):
@@ -96,7 +100,11 @@ class ResponseSurface(DoE):
 
     def __init__(self, min_values, max_values):
         super().__init__(min_values, max_values)
-        self.samples = self.determine_plan_points(self.bb_points())
+
+    @property
+    def samples(self):
+        """ Update the samples. """
+        return self.determine_plan_points(self.bb_points())
 
     def bb_points(self):
         """Box-Behnken designs."""
