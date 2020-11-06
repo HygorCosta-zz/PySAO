@@ -1,5 +1,6 @@
 """ Tests for Simulation class."""
 import pytest
+import numpy as np
 from sao_opt.opt_problem import Simulation
 
 
@@ -37,11 +38,20 @@ def test_reservoir_param_max_plat(simulation):
 
 def test_len_nominal(simulation):
     """ Test nominal rate."""
-    assert len(simulation.nominal) == 24
+    assert len(simulation.nominal) == 1
+    assert simulation.nominal[0].shape == (24, )
 
 
-def test_high_fidelity(simulation):
+def test_high_fidelity_well_nominal(simulation):
     """ Test run high fidelity simulation."""
-    breakpoint()
     eva = simulation.high_fidelity(simulation.nominal)
-    assert eva is not None
+    print(eva[0])
+    assert eva[0] > - 43
+
+
+def test_high_fidelity_plat_nominal(simulation):
+    """ Test run high fidelity simulation."""
+    plat_nominal = np.ones_like(simulation.nominal)
+    eva = simulation.high_fidelity(plat_nominal)
+    print(eva[0])
+    assert eva[0] > - 43
