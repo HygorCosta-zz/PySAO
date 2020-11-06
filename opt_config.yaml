@@ -1,0 +1,10 @@
+# Optimization parameters config file.
+delta: 0.2
+ite_max: 50
+ite_max_sao: 20
+tol_opt: 1e-5
+tol_delta: 1e-3
+
+# Parallel parameters
+# null = None, != null => parallel run
+pool_size: null
