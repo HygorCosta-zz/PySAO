@@ -99,9 +99,22 @@ class OptimizationProblem(Simulation):
         """ Create matrix A for linear constraint."""
         nb_prod = self.res_param["nb_prod"]
         nb_inj = self.res_param["nb_inj"]
-        prod = np.repeat([1, 0], [nb_prod, nb_inj])
-        inj = np.repeat([0, 1], [nb_prod, nb_inj])
-        return [prod, inj]
+        num_cycles = self.res_param["nb_cycles"]
+        nb_wells = nb_prod + nb_inj
+        n_var = num_cycles * nb_wells
+        matrix = np.zeros((2 * num_cycles, n_var))
+        for i in range(2 * num_cycles):
+            if (i % 2) == 0:
+                # For producers
+                start = int(i / 2 * nb_wells)
+                stop = int(start + nb_prod)
+                matrix[i, start: stop] = 1
+            else:
+                # For injectors
+                start = int((i - 1) / 2 * nb_wells + nb_prod)
+                stop = int(start + nb_inj)
+                matrix[i, start:stop] = 1
+        return matrix
 
     def get_upper(self):
         """ Get the upper linear constraint."""
@@ -120,7 +133,8 @@ class OptimizationProblem(Simulation):
 
         prod = _prod_norm(self.res_param)
         inj = _inj_norm(self.res_param)
-        return [prod, inj]
+        num_cycles = self.res_param["nb_cycles"]
+        return np.tile([prod, inj], num_cycles)
 
     def bounds_constr(self):
         """ Create bound constraints."""
@@ -133,7 +147,7 @@ class OptimizationProblem(Simulation):
         """ Linear constraints for optimization problem."""
 
         if "max_plat_prod" in self.res_param:
-            lower = [0, 0]
+            lower = [0, 0] * self.res_param["nb_cycles"]
             upper = self.get_upper()
             matrix = self._create_matrix()
             return LinearConstraint(matrix, lower, upper)
