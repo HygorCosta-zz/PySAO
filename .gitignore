@@ -1,6 +1,7 @@
 .venv
 PyMEX/
 .vim/
+Temp_Run/
 
 # Python compilation files
 __pychache__/
