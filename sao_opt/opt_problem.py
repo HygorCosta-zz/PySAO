@@ -138,9 +138,10 @@ class OptimizationProblem(Simulation):
 
     def bounds_constr(self):
         """ Create bound constraints."""
-        size = self.res_param["nb_prod"] + self.res_param["nb_inj"]
-        lower = np.zeros((size, 1))
-        upper = np.ones((size, 1))
+        number_wells = self.res_param["nb_prod"] + self.res_param["nb_inj"]
+        number_cycles = self.res_param["nb_cycles"]
+        lower = np.zeros((number_cycles * number_wells, 1))
+        upper = np.ones((number_cycles * number_wells, 1))
         return Bounds(lower, upper)
 
     def linear_const(self):
