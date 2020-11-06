@@ -21,11 +21,11 @@ class TrustRegion:
             Upper limit of the search space.
 
         """
-        self.x_center = x_center
+        self.x_center = x_center[-1]
         self.delta = problem.delta
         self.pho = []
-        self.lower = problem.lower
-        self.upper = problem.upper
+        self.lower = problem.bounds.lb.flatten()
+        self.upper = problem.bounds.ub.flatten()
 
     def update_bounds(self):
         """ Find the new search region."""
@@ -34,8 +34,8 @@ class TrustRegion:
         if np.any(new_lower < self.lower):
             ind = new_lower < self.lower
             new_lower[ind] = self.lower[ind]
-        new_upper = self.x_center - space * self.delta / 2
-        if np.any(new_upper < self.upper):
+        new_upper = self.x_center + space * self.delta / 2
+        if np.any(new_upper > self.upper):
             ind = new_upper > self.upper
             new_upper[ind] = self.upper[ind]
         self.lower = new_lower
