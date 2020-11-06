@@ -11,7 +11,7 @@ from sao_opt.results import Results
 # ---------- Problem Layer -----------------
 # Create problem
 simulation = Simulation()
-problem = OptimizationProblem(simulation)
+problem = OptimizationProblem()
 
 # Create trust region
 x_init = simulation.nominal
