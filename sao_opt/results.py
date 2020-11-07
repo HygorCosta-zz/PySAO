@@ -34,9 +34,10 @@ class AppendResults:
 
     def update_count(self):
         """ Add counter."""
-        if self.count:
+        if not self.count:
             self.count.append(1)
-        self.count.append(self.count[-1] + 1)
+        else:
+            self.count.append(self.count[-1] + 1)
 
     def update_fobj(self, fobj):
         """ Append objective function."""
@@ -57,9 +58,9 @@ class AppendResults:
         """ Append delta. """
         self.delta.append(delta)
 
-    def update_rho(self, rho):
+    def update_pho(self, pho):
         """ Update rho."""
-        self.pho.append(rho)
+        self.pho.append(pho)
 
 
 class Results(AppendResults):
@@ -120,7 +121,7 @@ class Results(AppendResults):
     def evaluate_fobj_center(self):
         """ Evaluate x in the center of the trust region. """
         x_center = self.solver.x_init
-        return self.simulation.high(x_center)
+        return self.simulation.high_fidelity(x_center)
 
     def evaluate_fap_star(self):
         """ Optimal point in the surrogate model."""
@@ -145,6 +146,6 @@ class Results(AppendResults):
         self.update_x_center(self.solver.x_init)
         self.update_x_star(self.solver.result.x)
         self.update_delta(self.trust_region.delta)
-        self.update_rho(self.trust_region.rho)
+        self.update_pho(self.trust_region.rho)
         self.update_count()
         self.describe()
