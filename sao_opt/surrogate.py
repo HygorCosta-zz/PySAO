@@ -1,28 +1,19 @@
 """ Create surrogate model for SAO. """
 from scipy.interpolate import Rbf
 from .doe import RandomDoE
-from .opt_problem import Simulation
 
 
-class Surrogate:
+class RadialBasisSurrogate():
 
-    """Create the surrogate model."""
+    """Radial Basis Surrogate. """
 
-    def __init__(self, input_vars, output_vars, option=None):
-        """Surrogate model.
-
-        Parameters
-        ----------
-        input_vars: array
-            Input variables.
-        output_vars: array
-            Output variables.
-
-
-        """
-        self._input_vars = input_vars
-        self._output_vars = output_vars
-        self.option = option
+    def __init__(self, input_train, output_train,
+                 func='cubic'):
+        self._input_vars = input_train
+        self._output_vars = output_train
+        self.option = func
+        self.model = []
+        self.build_model()
 
     @property
     def input_vars(self):
@@ -44,7 +35,18 @@ class Surrogate:
         """ Setter for output."""
         self._output_vars = new_output
 
-    def build_approximation(self, method):
+    def __call__(self, design_var):
+        """ Evaluate the input variables and return the
+        approximate value.
+
+        Parameters
+        ----------
+        input_vars: array
+            The same number of dimensions of the input_train.
+        """
+        return self.model(*design_var.T)
+
+    def build_model(self):
         """ Interpolated values.
 
         Parameters
@@ -57,35 +59,25 @@ class Surrogate:
             Interpolated values from the input variables.
         """
         if self.option is not None:
-            return method(*self.input_vars.T, self.output_vars,
-                          self.option)
-        return method(*self.input_vars.T, self.output_vars)
+            self.model = Rbf(*self.input_vars.T,
+                             self.output_vars,
+                             function=self.option)
+        self.model = Rbf(*self.input_vars.T, self.output_vars)
 
-
-class RadialBasisSurrogate(Surrogate):
-
-    """Radial Basis Surrogate. """
-
-    def __init__(self, input_train, output_train,
-                 func='cubic'):
-        super().__init__(input_train, output_train, func)
-        self.model = self.build_approximation(Rbf)
-
-    def evaluate(self, input_vars):
-        """ Evaluate the input variables and return the
-        approximate value.
+    def update(self, func, new_lb, new_ub):
+        """ Update the model.
 
         Parameters
         ----------
-        input_vars: array
-            The same number of dimensions of the input_train.
+        func: method
+            Function to evaluate the samples.
+        new_lb: array-like
+            Lower boundaries.
+        new_ub: array-like
+            Upper boundaries.
         """
-        return self.model(*input_vars.T)
-
-    def update(self, new_lb, new_ub):
-        """ Update the model."""
         doe = RandomDoE(new_lb, new_ub)
-        out_put = Simulation().high_fidelity(doe.samples)
+        output = func(doe.samples)
         self.input_vars = doe.samples
-        self.output_vars = out_put
-        self.model = self.build_approximation(Rbf)
+        self.output_vars = output
+        self.build_model()
