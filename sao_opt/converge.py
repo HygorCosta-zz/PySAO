@@ -37,8 +37,9 @@ class Converge:
             self.flag = 1
             print("SAO convergiu = Parado nas últimas 5 rodadas.")
             self.converge = True
-        else:
-            self.converge = False
+            return True
+        self.converge = False
+        return False
 
     def converge_delta(self):
         """ Verify if the delta converge."""
@@ -49,8 +50,9 @@ class Converge:
             self.flag = 2
             print("Parado devido a pequena região de confiança.")
             self.converge = True
-        else:
-            self.converge = False
+            return True
+        self.converge = False
+        return False
 
     def max_iter(self):
         """ Verify if the max iter was achieved."""
@@ -60,10 +62,11 @@ class Converge:
             self.flag = 3
             print("Num max de iterações do SAO.")
             self.converge = True
-        else:
-            self.converge = False
+            return True
+        self.converge = False
+        return False
 
-    def is_true(self):
+    def __call__(self):
         """ Verify all kinds of converge."""
         if self.stop_region():
             return True
