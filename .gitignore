@@ -6,3 +6,4 @@ Temp_Run/
 # Python compilation files
 __pychache__/
 *.py[cod]
+*.csv
