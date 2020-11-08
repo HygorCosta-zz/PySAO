@@ -31,7 +31,7 @@ class Sequence:
     def run(self):
         """ Apply optimization sequence. """
 
-        while not self.converge.is_true():
+        while not self.converge():
 
             # Update lower and upper
             self.trust_region.update_bounds()
