@@ -21,16 +21,18 @@ class AppendResults:
         """ Create a file to describe the optimization
         evolution."""
         datas = {
-            'fobj_center': self.fob_center,
-            'fobj_start': self.fob_star,
-            'fap_center': self.fap_center,
-            'fap_star': self.fap_star,
-            'x_center': self.x_center,
+            'fob_c': self.fob_center,
+            'fob_s': self.fob_star,
+            'fap_c': self.fap_center,
+            'fap_s': self.fap_star,
+            'x_c': self.x_center,
+            'x_s': self.x_star,
             'delta': self.delta,
             'pho': self.pho
         }
         dframe = pd.DataFrame(datas)
-        dframe.to_csv("../results.out")
+        dframe.to_csv("../results.csv", sep='\t', encoding='utf-8',
+                      index=False)
 
     def update_count(self):
         """ Add counter."""
@@ -41,10 +43,10 @@ class AppendResults:
 
     def update_fobj(self, fobj):
         """ Append objective function."""
-        self.fob_center.append(fobj[0])
-        self.fob_star.append(fobj[1])
-        self.fap_center.append(fobj[2])
-        self.fap_star.append(fobj[3])
+        self.fob_star.append(fobj[0])
+        self.fob_center.append(fobj[1])
+        self.fap_star.append(fobj[2])
+        self.fap_center.append(fobj[3])
 
     def update_x_center(self, x_center):
         """ Append x_center. """
@@ -74,9 +76,7 @@ class Results(AppendResults):
         Parameters
         ----------
         simulation: instance of Simulation()
-
-
-        """
+"""
         super().__init__()
         self.simulation = simulation
         self._solver = solver
@@ -106,7 +106,7 @@ class Results(AppendResults):
     @property
     def trust_region(self):
         """ Getter trust_region."""
-        return self.trust_region
+        return self._trust_region
 
     @trust_region.setter
     def trust_region(self, new_region):
@@ -115,7 +115,7 @@ class Results(AppendResults):
 
     def evaluate_fobj_star(self):
         """ Evaluate the x in the high fidelity model."""
-        x_star = self.solver.results.x
+        x_star = self.solver.result.x
         return self.simulation.high_fidelity(x_star)
 
     def evaluate_fobj_center(self):
@@ -125,7 +125,7 @@ class Results(AppendResults):
 
     def evaluate_fap_star(self):
         """ Optimal point in the surrogate model."""
-        return self.solver.results.fun
+        return self.solver.result.fun
 
     def evaluate_fap_center(self):
         """ Surrogate value for x_center."""
@@ -137,7 +137,7 @@ class Results(AppendResults):
         fobj_star = self.evaluate_fobj_star()
         fobj_center = self.evaluate_fobj_center()
         fap_star = self.evaluate_fap_star()
-        fap_center = self.evaluate_fap_star()
+        fap_center = self.evaluate_fap_center()
         return [fobj_star, fobj_center, fap_star, fap_center]
 
     def update(self):
