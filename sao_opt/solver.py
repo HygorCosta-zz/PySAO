@@ -106,8 +106,14 @@ class TrustConstrSolver:
 
     def maximize_npv(self):
         """ Solve the optimiziation problem."""
-        self.result = minimize(self.func,
-                               self.x_init,
-                               method='trust-constr',
-                               bounds=self.bound,
-                               constraints=self.lcons)
+        if self.lcons:
+            self.result = minimize(self.func,
+                                   self.x_init,
+                                   method='trust-constr',
+                                   bounds=self.bound,
+                                   constraints=self.lcons)
+        else:
+            self.result = minimize(self.func,
+                                   self.x_init,
+                                   method='trust-constr',
+                                   bounds=self.bound)
