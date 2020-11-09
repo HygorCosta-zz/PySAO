@@ -18,14 +18,14 @@ class Simulation:
     @staticmethod
     def reservoir_parameters():
         """ Return the reservoir configuration."""
-        with open('../PyMEX/reservoir_config.yaml') as file:
+        with open('./PyMEX/reservoir_config.yaml') as file:
             res_param = yaml.load(file, Loader=yaml.FullLoader)
         return res_param
 
     @staticmethod
     def opt_parameters():
         """ Return the reservoir configuration."""
-        with open('../opt_config.yaml') as file:
+        with open('./opt_config.yaml') as file:
             res_param = yaml.load(file, Loader=yaml.FullLoader)
         return res_param
 
