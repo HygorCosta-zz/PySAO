@@ -13,14 +13,8 @@ from sao_opt.results import Results
 simulation = Simulation()
 problem = OptimizationProblem()
 
-# Create trust region
+# Initial guess
 x_init = simulation.nominal
-delta = problem.delta
-bound = problem.bounds
-
-# Optimization settings
-ite_max = problem.ite_max
-lcons = problem.linear
 
 
 # ---------- Init Routine Layer ----------------
@@ -31,13 +25,14 @@ trust_region = TrustRegion(x_init, problem)
 doe = RandomDoE(trust_region.lower, trust_region.upper)
 
 # Evaluate in High fidelity model
+breakpoint()
 samples_output = simulation.high_fidelity(doe.samples)
 
 # Surrogate model
 surrogate = RadialBasisSurrogate(doe.samples, samples_output)
 
 # Optimizer Solver
-solver = TrustConstrSolver(surrogate.evaluate, x_init, bound, lcons)
+solver = TrustConstrSolver(surrogate, x_init, problem.bounds, problem.linear)
 
 # Results
 results = Results(simulation, solver, surrogate, trust_region)
@@ -47,8 +42,7 @@ converge = Converge(results, problem)
 
 
 # ---------- Sequence Layer -----------------
-sequence = Sequence(simulation, doe, trust_region, surrogate,
-                    solver, converge, results)
+sequence = Sequence(trust_region, surrogate, solver, converge, results)
 sequence.run()
 
 # ----------- Final Resusts ------------------
