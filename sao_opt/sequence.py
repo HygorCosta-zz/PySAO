@@ -5,7 +5,7 @@ class Sequence:
 
     """Main class of the framework."""
 
-    def __init__(self, simulation, doe, trust_region, surrogate, solver,
+    def __init__(self, trust_region, surrogate, solver,
                  converge, results):
         """
         Parameters
@@ -20,8 +20,6 @@ class Sequence:
             instance of the class TrustRegion.
 
         """
-        self.simulation = simulation
-        self.doe = doe
         self.trust_region = trust_region
         self.surrogate = surrogate
         self.solver = solver
