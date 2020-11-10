@@ -14,6 +14,7 @@ class Simulation:
         self.res_param = self.reservoir_parameters()
         self.opt_param = self.opt_parameters()
         self.nominal = self.x_nominal()
+        self.num_simulations = 0
 
     @staticmethod
     def reservoir_parameters():
@@ -59,17 +60,13 @@ class Simulation:
         nom_prod = _prod_nom(self.res_param)
         nom_inj = _inj_nom(self.res_param)
         rate_cycle = np.repeat([nom_prod, nom_inj], [nb_prod, nb_inj])
-        return [np.tile(rate_cycle, self.res_param["nb_cycles"])]
+        return np.tile(rate_cycle, self.res_param["nb_cycles"])
 
-    def run(self, controls):
-        """ Return the npv for the controls."""
-        model = ParallelPyMex(controls, self.res_param)
-        return model.pool_pymex()
-
-    def high_fidelity(self, controls):
+    def __call__(self, controls):
         """High fidelity model."""
         pool_size = self.opt_param["pool_size"]
         model = ParallelPyMex(controls, self.res_param, pool_size)
+        self.num_simulations += controls.ndim
         return model.pool_pymex()
 
 
@@ -148,7 +145,7 @@ class OptimizationProblem(Simulation):
         """ Linear constraints for optimization problem."""
 
         if "max_plat_prod" in self.res_param:
-            lower = [0, 0] * self.res_param["nb_cycles"]
+            lower = np.tile([0, 0], self.res_param["nb_cycles"])
             upper = self.get_upper()
             matrix = self._create_matrix()
             return LinearConstraint(matrix, lower, upper)
