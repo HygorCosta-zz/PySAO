@@ -32,7 +32,7 @@ class AppendResults:
         }
         dframe = pd.DataFrame(datas)
         dframe.to_csv("../results.csv", sep='\t', encoding='utf-8',
-                      index=False)
+                      index=False, float_format='%.3f')
 
     def update_count(self):
         """ Add counter."""
@@ -116,12 +116,12 @@ class Results(AppendResults):
     def evaluate_fobj_star(self):
         """ Evaluate the x in the high fidelity model."""
         x_star = self.solver.result.x
-        return self.simulation.high_fidelity(x_star)
+        return self.simulation(x_star)
 
     def evaluate_fobj_center(self):
         """ Evaluate x in the center of the trust region. """
         x_center = self.solver.x_init
-        return self.simulation.high_fidelity(x_center)
+        return self.simulation(x_center)
 
     def evaluate_fap_star(self):
         """ Optimal point in the surrogate model."""
@@ -130,7 +130,7 @@ class Results(AppendResults):
     def evaluate_fap_center(self):
         """ Surrogate value for x_center."""
         x_center = self.solver.x_init
-        return self.surrogate.evaluate(x_center)
+        return self.surrogate(x_center)
 
     def fobj_list(self):
         """ Create a list of fobj and fap."""
@@ -146,6 +146,6 @@ class Results(AppendResults):
         self.update_x_center(self.solver.x_init)
         self.update_x_star(self.solver.result.x)
         self.update_delta(self.trust_region.delta)
-        self.update_pho(self.trust_region.rho)
+        self.update_pho(self.trust_region.pho)
         self.update_count()
         self.describe()
