@@ -5,7 +5,7 @@ class Sequence:
 
     """Main class of the framework."""
 
-    def __init__(self, trust_region, surrogate, solver,
+    def __init__(self, simulation, trust_region, surrogate, solver,
                  converge, results):
         """
         Parameters
@@ -20,6 +20,7 @@ class Sequence:
             instance of the class TrustRegion.
 
         """
+        self.simulation = simulation
         self.trust_region = trust_region
         self.surrogate = surrogate
         self.solver = solver
@@ -37,10 +38,12 @@ class Sequence:
             new_ub = self.trust_region.upper
 
             # New Surrogate
-            self.surrogate.update(new_lb, new_ub)
+            self.surrogate.update(self.simulation, new_lb, new_ub)
 
             # New solver parameters
             self.solver.bound = [new_lb, new_ub]
+            self.solver.func = self.surrogate
+            self.solver.x_init = self.trust_region.x_center
 
             # Optimize
             self.solver.maximize_npv()
@@ -53,4 +56,9 @@ class Sequence:
 
             # New center point and delta
             self.trust_region.update_search_region(self.results)
+
+            # Update converge conditions
+            self.converge.results = self.results
         print(" Optimization is finish.!! \n")
+        print(f"Optimal value: {self.results.fob_star[-1]}")
+        print(f"Optimal x: {self.results.x_star[-1]}")
