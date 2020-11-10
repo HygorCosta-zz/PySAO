@@ -14,25 +14,24 @@ simulation = Simulation()
 problem = OptimizationProblem()
 
 # Initial guess
-x_init = simulation.nominal
+x0 = simulation.nominal
 
 
 # ---------- Init Routine Layer ----------------
 # Trust region
-trust_region = TrustRegion(x_init, problem)
+trust_region = TrustRegion(x0, problem)
 
 # Lhs sample
 doe = RandomDoE(trust_region.lower, trust_region.upper)
 
 # Evaluate in High fidelity model
-breakpoint()
-samples_output = simulation.high_fidelity(doe.samples)
+samples_output = simulation(doe.samples)
 
 # Surrogate model
 surrogate = RadialBasisSurrogate(doe.samples, samples_output)
 
 # Optimizer Solver
-solver = TrustConstrSolver(surrogate, x_init, problem.bounds, problem.linear)
+solver = TrustConstrSolver(surrogate, x0, problem.bounds, problem.linear)
 
 # Results
 results = Results(simulation, solver, surrogate, trust_region)
@@ -42,7 +41,8 @@ converge = Converge(results, problem)
 
 
 # ---------- Sequence Layer -----------------
-sequence = Sequence(trust_region, surrogate, solver, converge, results)
+sequence = Sequence(simulation, trust_region, surrogate,
+                    solver, converge, results)
 sequence.run()
 
 # ----------- Final Resusts ------------------
