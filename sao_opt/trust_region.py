@@ -21,7 +21,7 @@ class TrustRegion:
             Upper limit of the search space.
 
         """
-        self.x_center = x_center[-1]
+        self.x_center = x_center
         self.delta = problem.delta
         self.pho = []
         self.lower = problem.bounds.lb.flatten()
