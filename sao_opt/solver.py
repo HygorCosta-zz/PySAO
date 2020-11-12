@@ -68,11 +68,11 @@ class TrustConstrSolver:
 
     """Trust region constraint algorith for scipy."""
 
-    def __init__(self, func, x_init, bound, lcons=None):
-        self._func = func
-        self._x_init = x_init
-        self._bound = bound
+    def __init__(self, lcons=None):
         self.lcons = lcons
+        self._func = []
+        self._x_init = []
+        self._bound = []
         self.result = []
 
     @property
