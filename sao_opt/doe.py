@@ -24,7 +24,7 @@ class DoE:
         self._min_values = min_values
         self._max_values = max_values
         self.dim = len(min_values)
-        self.num_samples = 2 * self.dim - 1
+        self.num_samples = 2 * self.dim + 1
 
     @property
     def min_values(self):
