@@ -1,5 +1,6 @@
 """ Save the results along the optimization. """
 import pandas as pd
+from sao_opt.opt_problem import Simulation
 
 
 class AppendResults:
@@ -69,7 +70,7 @@ class Results(AppendResults):
 
     """Results of the simulation."""
 
-    def __init__(self, simulation, solver, surrogate, trust_region):
+    def __init__(self):
         """Results from high fidelity model, surrogate model,
         delta and rho.
 
@@ -78,10 +79,10 @@ class Results(AppendResults):
         simulation: instance of Simulation()
 """
         super().__init__()
-        self.simulation = simulation
-        self._solver = solver
-        self._surrogate = surrogate
-        self._trust_region = trust_region
+        self.simulation = Simulation()
+        self._solver = []
+        self._surrogate = []
+        self._trust_region = []
 
     @property
     def solver(self):
