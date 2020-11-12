@@ -26,6 +26,8 @@ class TrustRegion:
         self.pho = []
         self.lower = problem.bounds.lb.flatten()
         self.upper = problem.bounds.ub.flatten()
+        self.new_lower = self.lower
+        self.new_upper = self.upper
 
     def update_bounds(self):
         """ Find the new search region."""
@@ -38,8 +40,8 @@ class TrustRegion:
         if np.any(new_upper > self.upper):
             ind = new_upper > self.upper
             new_upper[ind] = self.upper[ind]
-        self.lower = new_lower
-        self.upper = new_upper
+        self.new_lower = new_lower
+        self.new_upper = new_upper
 
     def update_search_region(self, results):
         """ Update the values of x_center, delta and ro.
@@ -90,3 +92,6 @@ class TrustRegion:
         elif 0.75 <= self.pho <= 1.25:
             self.x_center = x_star
             self.delta = 1.5 * self.delta
+
+        if self.delta > 1:
+            self.delta = 1
