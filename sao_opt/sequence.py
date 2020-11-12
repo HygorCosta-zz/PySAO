@@ -34,8 +34,8 @@ class Sequence:
 
             # Update lower and upper
             self.trust_region.update_bounds()
-            new_lb = self.trust_region.lower
-            new_ub = self.trust_region.upper
+            new_lb = self.trust_region.new_lower
+            new_ub = self.trust_region.new_upper
 
             # New Surrogate
             self.surrogate.update(self.simulation, new_lb, new_ub)
