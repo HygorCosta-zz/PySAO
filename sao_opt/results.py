@@ -32,7 +32,7 @@ class AppendResults:
             'pho': self.pho
         }
         dframe = pd.DataFrame(datas)
-        dframe.to_csv("../results.csv", sep='\t', encoding='utf-8',
+        dframe.to_csv("results.csv", sep='\t', encoding='utf-8',
                       index=False, float_format='%.3f')
 
     def update_count(self):
