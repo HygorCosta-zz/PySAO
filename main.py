@@ -26,7 +26,7 @@ trust_region = TrustRegion(x0, problem)
 doe = RandomDoE(trust_region.lower, trust_region.upper)
 
 # Surrogate model
-surrogate = RbfPoly()
+surrogate = RbfPoly(doe)
 
 # Optimizer Solver
 solver = TrustConstrSolver(problem.linear)
