@@ -36,9 +36,13 @@ class Sequence:
             self.trust_region.update_bounds()
             new_lb = self.trust_region.new_lower
             new_ub = self.trust_region.new_upper
+            delta = self.trust_region.delta
+
+            # Update samples
+            self.surrogate.doe(new_lb, new_ub, delta)
 
             # New Surrogate
-            self.surrogate.update(self.simulation, new_lb, new_ub)
+            self.surrogate.update(self.simulation)
 
             # New solver parameters
             self.solver.bound = [new_lb, new_ub]
