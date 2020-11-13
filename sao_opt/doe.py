@@ -13,9 +13,7 @@ class DoE:
         ----------
         dim: int
             Number of dimensions.
-        min_values: np-array
-            Minimum value in each dimension.
-        max_values: np-array
+        min_values: np-array Minimum value in each dimension.  max_values: np-array
             Maximium value in each dimension.
         criterion: str
             Criterion to sample the points.
@@ -24,7 +22,13 @@ class DoE:
         self._min_values = min_values
         self._max_values = max_values
         self.dim = len(min_values)
-        self.num_samples = 2 * self.dim + 1
+        self.num_samples = 4 * self.dim
+
+    def update_num_samples(self, delta):
+        """ Define the number of samples for SAO."""
+        self.num_samples *= delta
+        if self.num_samples < 2 * self.dim + 1:
+            self.num_samples = 2 * self.dim + 1
 
     @property
     def min_values(self):
@@ -77,11 +81,11 @@ class RandomDoE(DoE):
     def __init__(self, min_values, max_values):
         """Points created by random methods."""
         super().__init__(min_values, max_values)
+        self.samples = []
 
-    @property
-    def samples(self):
+    def create_samples(self):
         """ Update the samples. """
-        return self.determine_plan_points(self.lhs_points())
+        self.samples = self.determine_plan_points(self.lhs_points())
 
     def lhs_points(self):
         """Latin Hypercube Samples.
@@ -92,6 +96,13 @@ class RandomDoE(DoE):
 
         """
         return lhs(self.dim, self.num_samples)
+
+    def __call__(self, new_lb, new_ub, delta):
+        """ Create a new samples for new bounds."""
+        self.min_values = new_lb
+        self.max_values = new_ub
+        self.update_num_samples(delta)
+        self.create_samples()
 
 
 class ResponseSurface(DoE):
