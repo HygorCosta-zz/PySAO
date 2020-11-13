@@ -71,8 +71,7 @@ class RadialBasisSurrogate():
         ----------
         func: method
             Function to evaluate the samples.
-        new_lb: array-like
-            Lower boundaries.
+        new_lb: array-like Lower boundaries.
         new_ub: array-like
             Upper boundaries.
         """
@@ -87,7 +86,8 @@ class RbfPoly:
 
     """Radial Basis with polynomial tail."""
 
-    def __init__(self):
+    def __init__(self, doe):
+        self.doe = doe
         self._input_vars = []
         self._output_vars = []
         self.num_samples = []
@@ -159,7 +159,7 @@ class RbfPoly:
         self.lamb = params[:self.num_samples]
         self.gamma = params[self.num_samples:]
 
-    def update(self, func, new_lb, new_ub):
+    def update(self, func):
         """ Update the model.
 
         Parameters
@@ -171,9 +171,8 @@ class RbfPoly:
         new_ub: array-like
             Upper boundaries.
         """
-        doe = RandomDoE(new_lb, new_ub)
-        output = func(doe.samples)
-        self.input_vars = doe.samples
+        output = func(self.doe.samples)
+        self.input_vars = self.doe.samples
         self.output_vars = output
         self.model()
 
