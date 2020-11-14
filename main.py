@@ -9,7 +9,7 @@ from sao_opt.sequence import Sequence
 from sao_opt.converge import Converge
 from sao_opt.results import Results
 
-start = time.process_time()
+start = time.time()
 
 # ---------- Problem Layer -----------------
 # Create problem
@@ -46,7 +46,7 @@ sequence = Sequence(simulation, trust_region, surrogate,
 sequence.run()
 
 # ----------- Final Resusts ------------------
-end = time.process_time()
+end = time.time()
 with open("results.csv", "a") as result:
     result.write(f"CPU time consume: {end - start} seg.")
     result.write(f"Number of hf evaluations: \
