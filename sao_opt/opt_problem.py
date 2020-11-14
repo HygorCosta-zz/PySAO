@@ -65,7 +65,7 @@ class Simulation:
     def __call__(self, controls):
         """High fidelity model."""
         pool_size = self.opt_param["pool_size"]
-        if type(controls) is not np.ndarray:
+        if not isinstance(controls, np.ndarray):
             controls = np.array(controls)
         model = ParallelPyMex(controls, self.res_param, pool_size)
         self.num_simulations += controls.shape[0]
