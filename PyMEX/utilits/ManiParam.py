@@ -173,7 +173,7 @@ class PyMEX(ImexTools):
 
     def run_imex(self):
         """ call IMEX + Results Report. """
-        environ['CMG_HOME'] = '/cmg'
+        # environ['CMG_HOME'] = '/cmg'
 
         with open(self.basename['log'], "w") as log:
             dat_path = str(self.workdir.joinpath(self.basename['dat']))
