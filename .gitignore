@@ -6,3 +6,4 @@ Temp_Run/
 __pychache__/
 *.py[cod]
 *.csv
+requirements.txt
