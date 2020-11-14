@@ -33,7 +33,7 @@ class Converge:
     def converge_to_local_optima(self):
         """ Mean the optima value in the last 4 iterations."""
         last_star = self.results.fob_star[-1]
-        mean_start = np.mean(self.results.fob_star[-4:])
+        mean_start = np.mean(self.results.fob_star[-5:])
         dif = mean_start - last_star
         if dif < self.problem.tol_opt:
             return True
