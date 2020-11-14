@@ -379,20 +379,4 @@ PERF  GEOA  'PROD4'
     43 18 6  1.  OPEN    FLOW-TO  5
     43 18 7  1.  OPEN    FLOW-TO  6
 
-
-**DTWELL 0.1
-**DTMAX 30
-**DTMIN 0.1
-
-**Restricoes da Plataforma
-
-**Producao
-*GCONP 'EGGMODEL'
-*MAX STL 400.0
-
-**Injecao
-*GCONI 'EGGMODEL'
-*MAX STW 440.0
-
-
 $$WELL_INC
