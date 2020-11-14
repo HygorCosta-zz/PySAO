@@ -1,6 +1,5 @@
 """ Framework layout to run SAO - Sequential Approximate Optimizaion."""
 import time
-import numpy as np
 from sao_opt.doe import RandomDoE
 from sao_opt.trust_region import TrustRegion
 from sao_opt.opt_problem import OptimizationProblem, Simulation
@@ -50,3 +49,5 @@ sequence.run()
 end = time.process_time()
 with open("results.csv", "a") as result:
     result.write(f"CPU time consume: {end - start} seg.")
+    result.write(f"Number of hf evaluations: \
+    {sequence.simulation.num_simulations}.")
