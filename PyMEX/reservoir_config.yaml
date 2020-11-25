@@ -2,7 +2,7 @@
 path: "/home/hygorcosta/Documentos/Phd/SAO/PyMEX/reservoir_tpl"
 template: 'Egg_unif_ari_3_34.tpl'
 prices: [126, 19, 6, 0]
-nb_cycles: 2
+nb_cycles: 3
 nb_prod: 4
 nb_inj: 8
 time_concession: 3600

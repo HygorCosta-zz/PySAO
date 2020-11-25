@@ -22,7 +22,7 @@ class DoE:
         self._min_values = min_values
         self._max_values = max_values
         self.dim = len(min_values)
-        self.num_samples = 4 * self.dim
+        self.num_samples = 2 * self.dim + 1
 
     def update_num_samples(self, delta):
         """ Define the number of samples for SAO."""
@@ -95,7 +95,7 @@ class RandomDoE(DoE):
         np.array - (num_samples, num_dim)
 
         """
-        return lhs(self.dim, self.num_samples)
+        return lhs(self.dim, self.num_samples, criterion='m')
 
     def __call__(self, new_lb, new_ub, delta):
         """ Create a new samples for new bounds."""

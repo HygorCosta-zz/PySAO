@@ -8,6 +8,7 @@ from sao_opt.solver import TrustConstrSolver
 from sao_opt.sequence import Sequence
 from sao_opt.converge import Converge
 from sao_opt.results import Results
+from sao_opt.write_results import WriteResults
 
 start = time.time()
 
@@ -45,9 +46,9 @@ sequence = Sequence(simulation, trust_region, surrogate,
                     solver, converge, results)
 sequence.run()
 
-# ----------- Final Resusts ------------------
 end = time.time()
-with open("results.csv", "a") as result:
-    result.write(f"CPU time consume: {end - start} seg.")
-    result.write(f"Number of hf evaluations: \
-    {sequence.simulation.num_simulations}.")
+time_spend = end - start
+nfev = sequence.simulation.num_simulations
+
+# ----------- Save Results ------------------
+write_resul = WriteResults(time_spend, nfev, problem)

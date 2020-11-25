@@ -1,5 +1,5 @@
 # Optimization parameters config file.
-delta: 1
+delta: 0.5
 ite_max: 50
 ite_max_sao: 20
 tol_opt: 1.0e-5

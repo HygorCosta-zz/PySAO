@@ -109,11 +109,11 @@ class TrustConstrSolver:
         if self.lcons:
             self.result = minimize(self.func,
                                    self.x_init,
-                                   method='trust-constr',
+                                   method='SLSQP',
                                    bounds=self.bound,
                                    constraints=self.lcons)
         else:
             self.result = minimize(self.func,
                                    self.x_init,
-                                   method='trust-constr',
+                                   method='SLSQP',
                                    bounds=self.bound)
