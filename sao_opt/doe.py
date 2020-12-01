@@ -24,11 +24,11 @@ class DoE:
         self.dim = len(min_values)
         self.num_samples = 2 * self.dim + 1
 
-    def update_num_samples(self, delta):
-        """ Define the number of samples for SAO."""
-        self.num_samples *= delta
-        if self.num_samples < 2 * self.dim + 1:
-            self.num_samples = 2 * self.dim + 1
+    # def update_num_samples(self, delta):
+    #     """ Define the number of samples for SAO."""
+    #     self.num_samples *= delta
+    #     if self.num_samples < 2 * self.dim + 1:
+    #         self.num_samples = 2 * self.dim + 1
 
     @property
     def min_values(self):
@@ -101,7 +101,7 @@ class RandomDoE(DoE):
         """ Create a new samples for new bounds."""
         self.min_values = new_lb
         self.max_values = new_ub
-        self.update_num_samples(delta)
+        # self.update_num_samples(delta)
         self.create_samples()
 
 
