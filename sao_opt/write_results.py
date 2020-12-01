@@ -53,7 +53,7 @@ class WriteResults:
 
     def save_results(self):
         """ Save results."""
-        with open('../results.csv', 'a') as csv_file:
+        with open('results.csv', 'a') as csv_file:
             self.writer = csv.writer(csv_file)
             self.time_in_hours()
             self.write_nfev()

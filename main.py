@@ -10,6 +10,7 @@ from sao_opt.converge import Converge
 from sao_opt.results import Results
 from sao_opt.write_results import WriteResults
 
+# Start time
 start = time.time()
 
 # ---------- Problem Layer -----------------
@@ -35,7 +36,7 @@ surrogate = RbfPoly(doe)
 solver = TrustConstrSolver(problem.linear)
 
 # Results
-results = Results()
+results = Results(surrogate)
 
 # Converge
 converge = Converge(results, problem)

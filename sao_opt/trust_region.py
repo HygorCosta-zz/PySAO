@@ -23,7 +23,7 @@ class TrustRegion:
         """
         self.x_center = x_center
         self.delta = problem.delta
-        self.pho = []
+        self.pho = 0
         self.lower = problem.bounds.lb.flatten()
         self.upper = problem.bounds.ub.flatten()
         self.new_lower = self.lower

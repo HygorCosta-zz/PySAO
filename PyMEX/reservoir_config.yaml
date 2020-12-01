@@ -1,6 +1,6 @@
 # Reservoir Simulation configuration.
 path: "/home/hygorcosta/Documentos/Phd/SAO/PyMEX/reservoir_tpl"
-template: 'Egg_unif_ari_3_34.tpl'
+template: 'Egg_ham_3.tpl'
 prices: [126, 19, 6, 0]
 nb_cycles: 3
 nb_prod: 4

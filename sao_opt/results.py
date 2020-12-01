@@ -1,4 +1,5 @@
 """ Save the results along the optimization. """
+import numpy as np
 import pandas as pd
 from sao_opt.opt_problem import Simulation
 
@@ -17,23 +18,42 @@ class AppendResults:
         self.x_star = []
         self.delta = []
         self.pho = []
+        self.use_header = True
+        self.write_mode = "w"
 
-    def describe(self):
+    def describe(self, nfev):
         """ Create a file to describe the optimization
-        evolution."""
+        evolution.
+
+        Parameters
+        ----------
+        level: int
+            Optimization level.
+        nfev: int
+            Number of functions evaluation
+
+        """
         datas = {
-            'fob_c': self.fob_center,
-            'fob_s': self.fob_star,
-            'fap_c': self.fap_center,
-            'fap_s': self.fap_star,
-            'x_c': self.x_center,
-            'x_s': self.x_star,
-            'delta': self.delta,
-            'pho': self.pho
+            'fob_c': self.fob_center[-1],
+            'fob_s': self.fob_star[-1],
+            'fap_c': self.fap_center[-1],
+            'fap_s': self.fap_star[-1],
+            'x_c': [np.around(self.x_center[-1], 5)],
+            'x_s': [np.around(self.x_star[-1], 5)],
+            'delta': self.delta[-1],
+            'pho': self.pho[-1],
+            'nfev-hf': nfev
         }
         dframe = pd.DataFrame(datas)
-        dframe.to_csv("results.csv", sep='\t', encoding='utf-8',
-                      index=False, float_format='%.3f')
+        dframe.to_csv("results.csv",
+                      mode=self.write_mode,
+                      sep='\t',
+                      index=False,
+                      encoding='utf-8',
+                      float_format='%.5f',
+                      header=self.use_header)
+        self.write_mode = "a"
+        self.use_header = False
 
     def update_count(self):
         """ Add counter."""
@@ -70,46 +90,46 @@ class Results(AppendResults):
 
     """Results of the simulation."""
 
-    def __init__(self):
+    def __init__(self, surrogate):
         """Results from high fidelity model, surrogate model,
         delta and rho.
 
         Parameters
         ----------
         simulation: instance of Simulation()
-"""
+        """
         super().__init__()
         self.simulation = Simulation()
         self._solver = []
-        self._surrogate = []
+        self._surrogate = surrogate
         self._trust_region = []
 
-    @property
+    @ property
     def solver(self):
         """Getter solver."""
         return self._solver
 
-    @solver.setter
+    @ solver.setter
     def solver(self, new_solver):
         """ Setter solver. """
         self._solver = new_solver
 
-    @property
+    @ property
     def surrogate(self):
         """ Getter surrogate."""
         return self._surrogate
 
-    @surrogate.setter
+    @ surrogate.setter
     def surrogate(self, new_surrogate):
         """ Setter surrogate."""
         self._surrogate = new_surrogate
 
-    @property
+    @ property
     def trust_region(self):
         """ Getter trust_region."""
         return self._trust_region
 
-    @trust_region.setter
+    @ trust_region.setter
     def trust_region(self, new_region):
         """ Setter trust_region."""
         self._trust_region = new_region
@@ -149,4 +169,4 @@ class Results(AppendResults):
         self.update_delta(self.trust_region.delta)
         self.update_pho(self.trust_region.pho)
         self.update_count()
-        self.describe()
+        self.describe(self.simulation.num_simulations)
